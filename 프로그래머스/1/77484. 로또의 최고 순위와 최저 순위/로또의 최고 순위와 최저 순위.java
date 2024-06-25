@@ -1,4 +1,4 @@
-import java.util.Arrays;
+
 class Solution {
     public int[] solution(int[] lottos, int[] win_nums) {
         int[] answer = new int[10];
