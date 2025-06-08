@@ -1,14 +1,12 @@
 N = int(input())
 found = False
-for i in range(N):
-    sum = 0
-    M = str(i)
-    for j in range(len(M)):
-        sum += int(M[j])
-    if N == int(M) + sum:
+
+for i in range(max(1, N - 9 * len(str(N))), N):  # 탐색 범위 최적화 포함
+    digit_sum = sum(int(d) for d in str(i))
+    if i + digit_sum == N:
+        print(i)
         found = True
-        print(M)
         break
-    
-if found == False:
+
+if not found:
     print(0)
