@@ -1,0 +1,11 @@
+-- 코드를 입력하세요
+WITH base AS(
+    SELECT i.NAME, i.DATETIME
+    from ANIMAL_INS i
+    LEFT JOIN ANIMAL_OUTS o ON i.ANIMAL_ID = o.ANIMAL_ID
+    WHERE o.DATETIME is null
+)
+SELECT NAME, DATETIME
+from base
+ORDER BY DATETIME
+limit 3
