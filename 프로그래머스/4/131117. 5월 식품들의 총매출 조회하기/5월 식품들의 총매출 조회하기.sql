@@ -1,0 +1,15 @@
+-- 코드를 입력하세요
+with f_order as(
+    SELECT PRODUCT_ID, SUM(AMOUNT) as AMOUNT
+    from FOOD_ORDER
+    where PRODUCE_DATE >= '2022-05-01' and PRODUCE_DATE < '2022-06-01'
+    GROUP BY PRODUCT_ID
+),
+
+base as (SELECT p.PRODUCT_ID, p.PRODUCT_NAME, p.PRICE, o.AMOUNT
+from FOOD_PRODUCT p
+JOIN f_order o ON p.PRODUCT_ID = o.PRODUCT_ID)
+
+select PRODUCT_ID, PRODUCT_NAME, (PRICE * AMOUNT) as TOTAL_SALES
+from base
+order by (PRICE * AMOUNT) DESC, PRODUCT_ID ASC
