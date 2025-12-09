@@ -12,19 +12,22 @@ for _ in range(N-1):
     graph[v].append(u)
     graph[u].append(v)
 
-
-parent = [0] * (N + 1)   # parent[i] = i의 부모
-visited = [False] * (N + 1)
-
+visited = [0] * (N+1)
+parents = [0] * (N+1)
+parents[1] = 1
 def dfs(node):
-    visited[node] = True
-    for nxt in graph[node]:
-        if not visited[nxt]:
-            parent[nxt] = node      # 여기서 부모 기록!
-            dfs(nxt)
+    visited[node] = 1 #방문표시
+    for i in graph[node]:
+        if visited[i] == 0: #방문하지 않았다면
+            parents[i] = node #부모로 지정
+            dfs(i)
 
-dfs(1)  # 루트를 1번이라고 가정
+dfs(1)
 
-# 이제 parent[x] 가 x의 부모 노드 번호
-for i in range(2, N + 1):
-    print(parent[i])
+for i in range(2, N+1):
+    print(parents[i])
+    
+            
+
+
+
