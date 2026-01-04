@@ -1,0 +1,24 @@
+-- SALES_DATE, PRODUCT_ID로 group 하고 SALES_AMOUNT는 합하기
+-- 코드를 입력하세요
+with online as(SELECT SALES_DATE, PRODUCT_ID, USER_ID, SALES_AMOUNT
+from ONLINE_SALE
+where SALES_DATE >= '2022-03-01' and SALES_DATE < '2022-04-01'
+),
+offline as (SELECT SALES_DATE, PRODUCT_ID, NULL AS USER_ID, SALES_AMOUNT
+            from OFFLINE_SALE
+            where SALES_DATE >= '2022-03-01' and SALES_DATE < '2022-04-01'
+)
+
+
+select DATE_FORMAT(SALES_DATE, '%Y-%m-%d') as SALES_DATE, PRODUCT_ID, USER_ID, SALES_AMOUNT
+from online 
+
+UNION ALL
+
+select DATE_FORMAT(SALES_DATE, '%Y-%m-%d') as SALES_DATE, PRODUCT_ID, USER_ID, SALES_AMOUNT
+from offline
+
+order by SALES_DATE, PRODUCT_ID, USER_ID
+        
+          
+
