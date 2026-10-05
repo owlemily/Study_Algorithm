@@ -1,21 +1,17 @@
-WITH possible as(
-    SELECT r.CAR_ID, r.CAR_TYPE, r.DAILY_FEE
-    from CAR_RENTAL_COMPANY_CAR r
-    where (r.CAR_TYPE = '세단' or r.CAR_TYPE = 'SUV')
-    and not exists (
-        SELECT 1
+-- 2022.11.01~2022.11.30 대여해야하니까 history에 없는 자동차 중 -> 세단, SUV 이고 -> 대여금액 : 30일 x daily fee x(1-할인율) 
+with base_car as(
+    select c.CAR_ID, c.CAR_TYPE, c.DAILY_FEE, c.OPTIONS
+    from CAR_RENTAL_COMPANY_CAR c
+    where not exists(
+        select 1
         from CAR_RENTAL_COMPANY_RENTAL_HISTORY h
-        where h.START_DATE < '2022-12-01' and h.END_DATE >= '2022-11-01'
-        and r.CAR_ID=h.CAR_ID
+        where c.CAR_ID = h.CAR_ID
+        and START_DATE <= '2022-11-30' and END_DATE >= '2022-11-01'
     )
-),
-fee as(
-    select p.CAR_ID, p.CAR_TYPE, FLOOR(p.DAILY_FEE * 30 *(1 - d.DISCOUNT_RATE/100)) as FEE
-    from possible p
-    LEFT JOIN CAR_RENTAL_COMPANY_DISCOUNT_PLAN d ON p.CAR_TYPE=d.CAR_TYPE and d.DURATION_TYPE = '30일 이상'
-)
-
-select *
-from fee
-where FEE >= 500000 and FEE < 2000000
-ORDER BY FEE DESC, CAR_TYPE ASC, CAR_ID DESC
+    and (c.CAR_TYPE = '세단' or c.CAR_TYPE = 'SUV')
+) 
+select b.CAR_ID, b.CAR_TYPE, (30 * b.DAILY_FEE * (1- p.DISCOUNT_RATE/100)) as FEE
+from base_car b
+LEFT JOIN CAR_RENTAL_COMPANY_DISCOUNT_PLAN p on p.CAR_TYPE = b.CAR_TYPE and DURATION_TYPE = '30일 이상'
+where (30 * b.DAILY_FEE * (1- p.DISCOUNT_RATE/100)) >=500000 and (30 * b.DAILY_FEE * (1- p.DISCOUNT_RATE/100)) < 2000000
+ORDER BY FEE DESC, b.CAR_TYPE ASC, b.CAR_ID DESC 
